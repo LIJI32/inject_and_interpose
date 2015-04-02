@@ -223,7 +223,13 @@ static kern_return_t get_stuff(task_t task, cpu_type_t *cputype, struct addr_bun
 
 #if defined(__i386__) || defined(__x86_64__) || defined(__ppc__)
     // Try to guess whether the process is 64-bit,
-    bool proc64 = info.all_image_info_addr > 0;
+    bool proc64 = true;
+    for (unsigned char i = sizeof(u.data64.pad); i--;) {
+        if (u.data64.pad[i]!=0) {
+            proc64 = false;
+            break;
+        }
+    }
 #else
     bool proc64 = false;
 #endif
